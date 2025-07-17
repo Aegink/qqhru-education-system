@@ -1,0 +1,88 @@
+{
+  // ==================== 齐齐哈尔大学教务系统查询工具配置文件 ====================
+  // 本文件包含应用的所有配置项，请根据实际情况修改
+  // 修改后重启应用生效
+
+  // ==================== 网络环境配置 ====================
+  // 支持多种网络环境，每个环境包含完整的URL路径配置
+  // 可以添加新的网络环境或修改现有环境的配置
+  "NETWORK_CONFIGS": {
+    "校外网": {
+      "base_url": "http://111.43.36.164",  // 基础URL地址
+      "login_path": "/login",  // 登录页面路径
+      "login_post_path": "/j_spring_security_check",  // 登录提交路径
+      "scores_path": "/student/integratedQuery/scoreQuery/thisTermScores/index",  // 成绩查询路径
+      "captcha_path": "/captcha",  // 验证码获取路径
+      "logout_path": "/logout",  // 退出登录路径
+      "student_info_path": "/student/studentinfo/studentInfoModify/index",  // 学生信息路径
+      "description": "校外网络环境，适用于校外访问教务系统"  // 环境描述
+    },
+    "校内网": {
+      "base_url": "http://10.10.10.10",  // 基础URL地址
+      "login_path": "/login",  // 登录页面路径
+      "login_post_path": "/j_spring_security_check",  // 登录提交路径
+      "scores_path": "/student/integratedQuery/scoreQuery/thisTermScores/index",  // 成绩查询路径
+      "captcha_path": "/captcha",  // 验证码获取路径
+      "logout_path": "/logout",  // 退出登录路径
+      "student_info_path": "/student/studentinfo/studentInfoModify/index",  // 学生信息路径
+      "description": "校内网络环境，适用于校内访问教务系统"  // 环境描述
+    }
+  },
+
+  // 当前选择的网络环境（从上面的NETWORK_CONFIGS中选择）
+  "CURRENT_NETWORK": "校外网",
+
+  // ==================== 系统URL配置 ====================
+  // 以下URL根据当前网络环境自动生成，请勿手动修改
+  "BASE_URL": "http://111.43.36.164",  // 基础URL地址
+  "LOGIN_URL": "http://111.43.36.164/login",  // 登录页面完整URL
+  "LOGIN_POST_URL": "http://111.43.36.164/j_spring_security_check",  // 登录提交完整URL
+  "SCORES_URL": "http://111.43.36.164/student/integratedQuery/scoreQuery/thisTermScores/index",  // 成绩查询完整URL
+  "CAPTCHA_URL": "http://111.43.36.164/captcha",  // 验证码获取完整URL
+  "LOGOUT_URL": "http://111.43.36.164/logout",  // 退出登录完整URL
+  "STUDENT_INFO_URL": "http://111.43.36.164/student/studentinfo/studentInfoModify/index",  // 学生信息完整URL
+
+  // ==================== 兼容性配置 ====================
+  // 为了向后兼容保留的配置，从NETWORK_CONFIGS自动生成
+  "NETWORK_URLS": {
+    "校外网": "http://111.43.36.164",
+    "校内网": "http://10.10.10.10"
+  },
+
+  // ==================== 推送通知配置 ====================
+  // 用于成绩变化推送通知，需要申请PushPlus token
+  "PUSHPLUS_TOKEN": "you",  // 请替换为您的PushPlus token
+  "PUSHPLUS_URL": "http://www.pushplus.plus/send",  // PushPlus推送接口地址
+
+  // ==================== 目录和文件配置 ====================
+  // 应用数据存储目录配置，建议使用默认值
+  "DATA_DIR": "data",  // 数据存储目录
+  "SESSION_DIR": "data/sessions",  // 会话文件目录
+  "ACCOUNTS_FILE": "data/accounts.json",  // 账号信息文件
+  "CREDENTIALS_FILE": "data/credentials.json",  // 凭据文件
+  "LOGS_DIR": "logs",  // 日志文件目录
+  "TEMP_DIR": "temp",  // 临时文件目录
+
+  // ==================== 应用功能配置 ====================
+  "DEBUG_MODE": false,  // 调试模式，开启后会显示详细日志
+  "AUTO_LOGIN_ENABLED": false,  // 自动登录功能开关
+  "AUTO_LOGIN_CHECK_INTERVAL": 300,  // 自动登录检查间隔（秒）
+  "SESSION_EXPIRE_THRESHOLD": 600,  // 会话过期阈值（秒）
+  "AUTO_LOGIN_RETRY_COUNT": 3,  // 自动登录重试次数
+  "LAST_AUTO_LOGIN_TIME": 0,  // 上次自动登录时间戳
+
+  // ==================== 界面配置 ====================
+  // 应用窗口大小配置
+  "WINDOW_WIDTH": 400,  // 窗口宽度
+  "WINDOW_HEIGHT": 600,  // 窗口高度
+  "MIN_WINDOW_WIDTH": 350,  // 最小窗口宽度
+  "MIN_WINDOW_HEIGHT": 500,  // 最小窗口高度
+
+  // ==================== 网络请求配置 ====================
+  // 网络请求超时和重试配置
+  "REQUEST_TIMEOUT": 30,  // 网络请求超时时间（秒）
+  "MAX_RETRIES": 3,  // 最大重试次数
+  "RETRY_DELAY": 1.0,  // 重试延迟时间（秒）
+
+  // ==================== 配置文件结束 ====================
+}

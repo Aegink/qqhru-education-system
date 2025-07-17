@@ -1,0 +1,57 @@
+{
+  "NETWORK_CONFIGS": {
+    "校外网": {
+      "base_url": "http://111.43.36.164",
+      "login_path": "/login",
+      "login_post_path": "/j_spring_security_check",
+      "scores_path": "/student/integratedQuery/scoreQuery/thisTermScores/index",
+      "captcha_path": "/captcha",
+      "logout_path": "/logout",
+      "student_info_path": "/student/studentinfo/studentInfoModify/index",
+      "description": "校外网络环境，适用于校外访问教务系统"
+    },
+    "校内网": {
+      "base_url": "http://10.10.10.10",
+      "login_path": "/login",
+      "login_post_path": "/j_spring_security_check",
+      "scores_path": "/student/integratedQuery/scoreQuery/thisTermScores/index",
+      "captcha_path": "/captcha",
+      "logout_path": "/logout",
+      "student_info_path": "/student/studentinfo/studentInfoModify/index",
+      "description": "校内网络环境，适用于校内访问教务系统"
+    }
+  },
+  "CURRENT_NETWORK": "校外网",
+  "BASE_URL": "http://111.43.36.164",
+  "LOGIN_URL": "http://111.43.36.164/login",
+  "LOGIN_POST_URL": "http://111.43.36.164/j_spring_security_check",
+  "SCORES_URL": "http://111.43.36.164/student/integratedQuery/scoreQuery/thisTermScores/index",
+  "CAPTCHA_URL": "http://111.43.36.164/captcha",
+  "LOGOUT_URL": "http://111.43.36.164/logout",
+  "STUDENT_INFO_URL": "http://111.43.36.164/student/studentinfo/studentInfoModify/index",
+  "NETWORK_URLS": {
+    "校外网": "http://111.43.36.164",
+    "校内网": "http://10.10.10.10"
+  },
+  "PUSHPLUS_TOKEN": "you",
+  "PUSHPLUS_URL": "http://www.pushplus.plus/send",
+  "DATA_DIR": "data",
+  "SESSION_DIR": "data/sessions",
+  "ACCOUNTS_FILE": "data/accounts.json",
+  "CREDENTIALS_FILE": "data/credentials.json",
+  "LOGS_DIR": "logs",
+  "TEMP_DIR": "temp",
+  "DEBUG_MODE": false,
+  "AUTO_LOGIN_ENABLED": false,
+  "AUTO_LOGIN_CHECK_INTERVAL": 300,
+  "SESSION_EXPIRE_THRESHOLD": 600,
+  "AUTO_LOGIN_RETRY_COUNT": 3,
+  "LAST_AUTO_LOGIN_TIME": 0,
+  "WINDOW_WIDTH": 400,
+  "WINDOW_HEIGHT": 600,
+  "MIN_WINDOW_WIDTH": 350,
+  "MIN_WINDOW_HEIGHT": 500,
+  "REQUEST_TIMEOUT": 30,
+  "MAX_RETRIES": 3,
+  "RETRY_DELAY": 1.0
+}
