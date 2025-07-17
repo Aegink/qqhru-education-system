@@ -277,15 +277,19 @@ class CaptchaWidget(BoxLayout):
             if self.captcha_hint.parent:
                 image_wrapper.remove_widget(self.captcha_hint)
 
+            # 转换路径格式，确保Kivy能正确加载
+            import os
+            normalized_path = os.path.abspath(captcha_path).replace('\\', '/')
+
             # 设置图片源和大小
-            self.captcha_image.source = captcha_path
+            self.captcha_image.source = normalized_path
             self.captcha_image.size = (responsive_size(120), responsive_size(40))
 
             # 如果图片还没有添加到容器中，则添加它
             if not self.captcha_image.parent:
                 image_wrapper.add_widget(self.captcha_image)
 
-            logger.info("验证码UI更新成功")
+            logger.info(f"验证码UI更新成功，路径: {normalized_path}")
         except Exception as e:
             logger.error(f"更新验证码UI时出错: {e}")
             show_popup("错误", f"验证码显示失败: {str(e)}", "error")
