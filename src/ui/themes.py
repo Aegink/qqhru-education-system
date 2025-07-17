@@ -241,10 +241,10 @@ def update_responsive_config(config: Dict[str, Dict[str, float]]):
 
 def get_status_color(status: str) -> List[float]:
     """根据状态获取颜色
-    
+
     Args:
         status: 状态类型 ('success', 'error', 'warning', 'info')
-        
+
     Returns:
         RGBA颜色值列表
     """
@@ -255,8 +255,71 @@ def get_status_color(status: str) -> List[float]:
         'info': get_theme_color('info'),
         'default': get_theme_color('text_secondary')
     }
-    
+
     return status_colors.get(status, status_colors['default'])
+
+def get_grade_color_and_style(grade) -> tuple[List[float], bool]:
+    """根据成绩获取颜色和样式
+
+    Args:
+        grade: 成绩值（可以是数字、等级或其他格式）
+
+    Returns:
+        (颜色值, 是否加粗) 的元组
+    """
+    if not grade or str(grade).strip() == '' or str(grade).strip() == '-':
+        return get_theme_color('text_secondary'), False
+
+    grade_str = str(grade).strip()
+
+    # 处理数字成绩
+    try:
+        if grade_str.replace('.', '').isdigit():
+            grade_num = float(grade_str)
+
+            # 优秀成绩 (90-100分) - 深绿色
+            if grade_num >= 90:
+                return [0.15, 0.58, 0.20, 1], True  # 深绿色 #2E7D32
+            # 良好成绩 (80-89分) - 绿色
+            elif grade_num >= 80:
+                return get_theme_color('success'), True  # 标准绿色
+            # 中等成绩 (70-79分) - 蓝色
+            elif grade_num >= 70:
+                return [0.13, 0.59, 0.95, 1], True  # 蓝色 #2196F3
+            # 及格成绩 (60-69分) - 橙色
+            elif grade_num >= 60:
+                return get_theme_color('warning'), True  # 橙色
+            # 不及格成绩 (<60分) - 红色
+            else:
+                return get_theme_color('error'), True  # 红色
+
+    except (ValueError, TypeError):
+        pass
+
+    # 处理等级成绩
+    grade_lower = grade_str.lower()
+
+    # 优秀等级 - 深绿色
+    if grade_lower in ['优秀', '优', 'excellent', 'a+', 'a']:
+        return [0.15, 0.58, 0.20, 1], True  # 深绿色
+    # 良好等级 - 绿色
+    elif grade_lower in ['良好', '良', 'good', 'b+', 'b']:
+        return get_theme_color('success'), True
+    # 中等等级 - 蓝色
+    elif grade_lower in ['中等', '中', 'fair', 'c+', 'c']:
+        return [0.13, 0.59, 0.95, 1], True  # 蓝色
+    # 及格等级 - 橙色
+    elif grade_lower in ['及格', '合格', 'pass', 'd+', 'd']:
+        return get_theme_color('warning'), True
+    # 不及格等级 - 红色
+    elif grade_lower in ['不及格', '不合格', '挂科', 'fail', 'f', '缺考', '旷考']:
+        return get_theme_color('error'), True
+    # 其他特殊状态 - 紫色
+    elif grade_lower in ['免修', '免考', '缓考', '重修', '补考']:
+        return [0.61, 0.15, 0.69, 1], True  # 紫色 #9C27B0
+
+    # 默认颜色
+    return get_theme_color('text'), False
 
 # 监听窗口大小变化以更新响应式设计
 def _on_window_resize(instance, size):

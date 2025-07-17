@@ -16,8 +16,8 @@ from kivy.clock import Clock
 from kivy.core.window import Window
 
 from ..themes import (
-    get_theme_color, responsive_size, responsive_spacing, 
-    responsive_font_size
+    get_theme_color, responsive_size, responsive_spacing,
+    responsive_font_size, get_grade_color_and_style
 )
 from ..components import (
     PrimaryButton, SecondaryButton, show_popup, show_loading_dialog
@@ -623,6 +623,8 @@ class QueryScoresScreen(BoxLayout):
             spacing=0
         )
 
+        # 不添加测试标签，直接处理数据
+
         # 对成绩数据进行排序（按课程名称排序）
         sorted_scores = sorted(scores_data, key=lambda x: x.get('课程名', x.get('课程名称', '')))
 
@@ -632,20 +634,26 @@ class QueryScoresScreen(BoxLayout):
             course_name = score.get('课程名', score.get('课程名称', ''))
             logger.info(f"  {i+1}. {course_name}")
 
+        # 先创建所有数据行，然后反向添加到容器中
+        data_rows = []
         data_height = 0
-        # 按正常顺序添加，第一个添加的会显示在底部，最后添加的显示在顶部
+
+        # 创建所有数据行
         for i, score in enumerate(sorted_scores):
             course_name = score.get('课程名', score.get('课程名称', ''))
             logger.info(f"正在处理第{i+1}行: {course_name}")
 
             # 创建数据行（使用实际内容宽度）
+            row_height = responsive_size(44)
             score_layout = BoxLayout(
                 orientation='horizontal',
                 size_hint=(None, None),
                 width=final_table_width,  # 使用实际内容宽度
-                height=responsive_size(44),
+                height=row_height,
                 spacing=0
             )
+
+
 
             # 添加行背景色（交替显示）
             bg_color = (0.98, 0.98, 0.98, 1) if i % 2 == 1 else (1, 1, 1, 1)
@@ -659,39 +667,21 @@ class QueryScoresScreen(BoxLayout):
             course_name = score.get('课程名', score.get('课程名称', ''))
             credit = str(score.get('学分', '')) if score.get('学分', '') else '-'
 
-            # 调试第一行数据
-            if i == 0:
-                logger.info(f"第一行原始数据: {score}")
-                logger.info(f"第一行课程名称: '{course_name}'")
-                logger.info(f"第一行学分: '{credit}'")
-
             # 处理成绩单元格（需要特殊颜色处理）
             grade = score.get('成绩', '')
             grade_text = str(grade) if grade else '-'
-            grade_color = get_theme_color('text')
-            grade_bold = False
+            course_type = str(score.get('课程属性', '')) if score.get('课程属性', '') else '-'
 
-            if grade:
-                try:
-                    if str(grade).replace('.', '').isdigit():
-                        grade_num = float(grade)
-                        if grade_num >= 60:
-                            grade_color = get_theme_color('success')
-                            grade_bold = True
-                        else:
-                            grade_color = get_theme_color('error')
-                            grade_bold = True
-                    elif grade in ['优秀', '良好', '中等', '及格']:
-                        grade_color = get_theme_color('success')
-                        grade_bold = True
-                    elif grade in ['不及格', '缺考']:
-                        grade_color = get_theme_color('error')
-                        grade_bold = True
-                except:
-                    pass
+            # 处理成绩单元格（使用新的颜色分级系统）
+            grade = score.get('成绩', '')
+            grade_text = str(grade) if grade else '-'
+
+            # 使用新的成绩颜色分级函数
+            grade_color, grade_bold = get_grade_color_and_style(grade)
 
             course_type = str(score.get('课程属性', '')) if score.get('课程属性', '') else '-'
 
+            # 创建数据单元格配置，移除绩点列
             # 创建数据单元格配置，移除绩点列
             cell_configs = [
                 ('course_name', course_name, 'left', get_theme_color('text'), False),
@@ -740,10 +730,7 @@ class QueryScoresScreen(BoxLayout):
                     text_size=(available_cell_width, None)  # 明确设置text_size
                 )
 
-                # 调试第一行第一列的标签创建
-                if i == 0 and j == 0:
-                    logger.info(f"第一行第一列标签: text='{text}', width={final_width}, available_width={available_cell_width}")
-                    logger.info(f"标签属性: font_size={responsive_font_size(10)}, color={color}, halign={align}")
+
 
                 content_container.add_widget(cell_label)
                 cell_container.add_widget(content_container)
@@ -754,9 +741,14 @@ class QueryScoresScreen(BoxLayout):
                 Color(0.9, 0.9, 0.9, 1)
                 Rectangle(pos=(score_layout.x, score_layout.y), size=(score_layout.width, 1))
 
-            data_container.add_widget(score_layout)
-            logger.info(f"已添加第{i+1}行到容器: {course_name}")
+            # 将数据行添加到列表中，稍后统一添加到容器
+            data_rows.append((score_layout, course_name))
             data_height += responsive_size(44)
+
+        # 反向添加数据行到容器中（最后一行先添加，第一行最后添加）
+        # 这样确保第一行能够正确显示
+        for score_layout, course_name in reversed(data_rows):
+            data_container.add_widget(score_layout)
 
         # 设置数据容器高度
         data_container.height = data_height
