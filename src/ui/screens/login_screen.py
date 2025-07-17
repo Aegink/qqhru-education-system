@@ -269,9 +269,22 @@ class CaptchaWidget(BoxLayout):
     def _update_captcha_ui(self, captcha_path):
         """在主线程中更新验证码UI"""
         try:
-            # 直接设置图片源
+            # 获取图片容器
+            captcha_container = self.children[1]  # 验证码图片容器
+            image_wrapper = captcha_container.children[0]  # 图片包装器
+
+            # 如果当前显示的是提示标签，则移除它
+            if self.captcha_hint.parent:
+                image_wrapper.remove_widget(self.captcha_hint)
+
+            # 设置图片源和大小
             self.captcha_image.source = captcha_path
             self.captcha_image.size = (responsive_size(120), responsive_size(40))
+
+            # 如果图片还没有添加到容器中，则添加它
+            if not self.captcha_image.parent:
+                image_wrapper.add_widget(self.captcha_image)
+
             logger.info("验证码UI更新成功")
         except Exception as e:
             logger.error(f"更新验证码UI时出错: {e}")
@@ -309,17 +322,24 @@ class CaptchaWidget(BoxLayout):
     
     def clear(self):
         """清理验证码"""
-        self.captcha_input.text = ""
-        self.captcha_image.source = ""
+        try:
+            self.captcha_input.text = ""
+            self.captcha_image.source = ""
 
-        # 隐藏验证码图片，显示提示标签
-        if self.captcha_image.parent:
-            image_wrapper = self.captcha_image.parent
-            image_wrapper.remove_widget(self.captcha_image)
+            # 获取图片容器
+            captcha_container = self.children[1]  # 验证码图片容器
+            image_wrapper = captcha_container.children[0]  # 图片包装器
+
+            # 隐藏验证码图片，显示提示标签
+            if self.captcha_image.parent:
+                image_wrapper.remove_widget(self.captcha_image)
+
             if not self.captcha_hint.parent:
                 image_wrapper.add_widget(self.captcha_hint)
 
-        self.captcha_handler.cleanup()
+            self.captcha_handler.cleanup()
+        except Exception as e:
+            logger.error(f"清理验证码时出错: {e}")
 
 class LoginScreen(BoxLayout):
     """登录界面屏幕"""
