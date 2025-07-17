@@ -72,9 +72,9 @@ RESPONSIVE_CONFIG = {
     },
     'desktop': {
         'max_width': float('inf'),
-        'scale_factor': 0.8,  # 桌面端缩小以适应更大屏幕
-        'font_scale': 0.9,
-        'spacing_scale': 0.9
+        'scale_factor': 1.0,  # 桌面端使用正常缩放
+        'font_scale': 1.0,    # 桌面端使用正常字体大小
+        'spacing_scale': 1.0  # 桌面端使用正常间距
     }
 }
 

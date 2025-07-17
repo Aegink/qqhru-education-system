@@ -27,7 +27,8 @@ from ..components import (
     show_popup
 )
 from ...utils.font_manager import get_button_text
-from ...core.session import SessionManager
+from ...core.session import get_session_manager
+from ...core.auto_login import get_auto_login_manager
 from ...core.auth import CaptchaHandler, LoginManager
 from ...core.api import make_request
 from ...core.config import get_config
@@ -356,7 +357,7 @@ class LoginScreen(BoxLayout):
         self.padding = 0
         
         # 初始化管理器
-        self.session_manager = SessionManager()
+        self.session_manager = get_session_manager()
         self.login_manager = None
         self.keep_login_enabled = False
         
@@ -635,15 +636,31 @@ class LoginScreen(BoxLayout):
         self._update_status('登录成功', 'success')
         self.captcha_widget.clear()
 
-        # 如果启用了保持登录，则启用基于token的自动登录功能
+        # 如果启用了保持登录，则延迟启用自动登录功能（确保会话已保存）
         if self.keep_login_enabled:
             student_id = self.student_id_input.text.strip()
             if student_id:
-                # 这里可以添加自动登录功能的启用逻辑
-                self._update_status('已启用基于Token的自动保持登录', 'success')
+                # 延迟0.5秒启用自动登录，确保会话保存完成
+                Clock.schedule_once(lambda dt: self._enable_auto_login(student_id), 0.5)
 
         # 跳转到主界面
         Clock.schedule_once(lambda dt: self.app.show_main_screen(), 1)
+
+    def _enable_auto_login(self, student_id: str):
+        """启用自动登录功能"""
+        try:
+            # 获取自动登录管理器并启用自动登录
+            auto_login_manager = get_auto_login_manager()
+            success = auto_login_manager.enable_auto_login()
+            if success:
+                self._update_status('已启用自动登录功能', 'success')
+                logger.info(f"已为账号 {student_id} 启用自动登录")
+            else:
+                self._update_status('启用自动登录失败', 'warning')
+                logger.warning(f"为账号 {student_id} 启用自动登录失败")
+        except Exception as e:
+            logger.error(f"启用自动登录时出错: {e}")
+            self._update_status('启用自动登录时出错', 'error')
 
     def cancel(self, instance):
         """取消登录"""

@@ -65,11 +65,11 @@
 
   // ==================== 应用功能配置 ====================
   "DEBUG_MODE": false,  // 调试模式，开启后会显示详细日志
-  "AUTO_LOGIN_ENABLED": false,  // 自动登录功能开关
+  "AUTO_LOGIN_ENABLED": true,  // 自动登录功能开关
   "AUTO_LOGIN_CHECK_INTERVAL": 300,  // 自动登录检查间隔（秒）
   "SESSION_EXPIRE_THRESHOLD": 600,  // 会话过期阈值（秒）
   "AUTO_LOGIN_RETRY_COUNT": 3,  // 自动登录重试次数
-  "LAST_AUTO_LOGIN_TIME": 0,  // 上次自动登录时间戳
+  "LAST_AUTO_LOGIN_TIME": 1752761975,  // 上次自动登录时间戳
 
   // ==================== 界面配置 ====================
   // 应用窗口大小配置

@@ -23,10 +23,9 @@ from ..components import (
     show_popup, show_confirmation_dialog
 )
 from ...utils.font_manager import get_button_text
-from ...core.session import SessionManager
+from ...core.session import get_session_manager
 from ...core.api import make_request, extract_student_name
 from ...core.config import get_config, get_network_status
-from ...core.session import SessionManager
 from ...core.auto_login import get_auto_login_manager
 
 logger = logging.getLogger(__name__)
@@ -108,7 +107,7 @@ class MainScreen(BoxLayout):
     def __init__(self, app, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
         self.app = app
-        self.session_manager = SessionManager()
+        self.session_manager = get_session_manager()
         self.auto_login_manager = get_auto_login_manager()
 
         self.orientation = 'vertical'

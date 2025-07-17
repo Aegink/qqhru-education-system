@@ -24,7 +24,7 @@ from ..components import (
     PrimaryButton, SecondaryButton, ErrorButton,
     show_popup, show_confirmation_dialog
 )
-from ...core.session import SessionManager
+from ...core.session import get_session_manager
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +118,7 @@ class SwitchAccountScreen(BoxLayout):
         self.padding = 0
         
         # 初始化会话管理器
-        self.session_manager = SessionManager()
+        self.session_manager = get_session_manager()
         
         # 设置背景色
         with self.canvas.before:

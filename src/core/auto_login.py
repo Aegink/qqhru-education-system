@@ -12,7 +12,7 @@ from typing import Optional, Dict, Any
 from kivy.clock import Clock
 
 from .config import get_config, update_config, save_config
-from .session import SessionManager
+from .session import get_session_manager
 from .auth import LoginManager
 from .api import make_request, extract_student_name
 
@@ -22,7 +22,7 @@ class AutoLoginManager:
     """自动登录管理器"""
     
     def __init__(self):
-        self.session_manager = SessionManager()
+        self.session_manager = get_session_manager()
         self.login_manager = LoginManager()
         self._check_thread: Optional[threading.Thread] = None
         self._stop_checking = False

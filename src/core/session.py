@@ -35,17 +35,31 @@ def set_session(new_session):
 
 class SessionManager:
     """会话管理类，处理会话的保存、加载和验证"""
-    
+
+    _instance = None
+    _initialized = False
+
+    def __new__(cls):
+        """单例模式"""
+        if cls._instance is None:
+            cls._instance = super(SessionManager, cls).__new__(cls)
+        return cls._instance
+
     def __init__(self):
         """初始化会话管理器"""
+        if SessionManager._initialized:
+            return
+
         self.sessions_dir = get_config("SESSION_DIR")
         self.accounts_file = get_config("ACCOUNTS_FILE")
         self.accounts = self._load_accounts()
         self.current_account = None
-        
+
         # 确保目录存在
         os.makedirs(self.sessions_dir, exist_ok=True)
         os.makedirs(os.path.dirname(self.accounts_file), exist_ok=True)
+
+        SessionManager._initialized = True
     
     def _load_accounts(self) -> Dict[str, Any]:
         """加载保存的账号信息"""
@@ -136,7 +150,11 @@ class SessionManager:
         except Exception as e:
             logger.error(f"验证会话时出错: {str(e)}")
             return False
-    
+
+    def is_session_valid(self, student_id: Optional[str] = None) -> bool:
+        """检查会话是否有效（verify_session的别名）"""
+        return self.verify_session(student_id)
+
     def list_accounts(self) -> Dict[str, Any]:
         """获取所有保存的账号"""
         return self.accounts.copy()
@@ -382,3 +400,9 @@ class AutoSessionManager:
         self.disable_auto_login()
         self._save_session_tokens()
         logger.info("自动会话管理器已清理")
+
+
+# 全局SessionManager实例获取函数
+def get_session_manager() -> SessionManager:
+    """获取SessionManager单例实例"""
+    return SessionManager()

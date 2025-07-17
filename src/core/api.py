@@ -529,3 +529,99 @@ def query_scores(debug_mode: bool = False) -> bool:
         # 清理临时文件
         temp_manager.clean_all()
         return False
+
+
+def convert_rows_to_dict(score_rows: List[List[str]]) -> List[dict]:
+    """将列表格式的成绩数据转换为字典格式
+
+    Args:
+        score_rows: 列表格式的成绩数据
+
+    Returns:
+        字典格式的成绩数据列表
+    """
+    if not score_rows:
+        return []
+
+    dict_scores = []
+    for row in score_rows:
+        if len(row) >= 9:  # 确保有足够的列
+            score_dict = {
+                '课程号': row[0] if len(row) > 0 else '',
+                '课序号': row[1] if len(row) > 1 else '',
+                '课程名': row[2] if len(row) > 2 else '',
+                '课程名称': row[2] if len(row) > 2 else '',  # 别名
+                '学分': row[3] if len(row) > 3 else '',
+                '课程属性': row[4] if len(row) > 4 else '',
+                '最高分': row[5] if len(row) > 5 else '',
+                '最低分': row[6] if len(row) > 6 else '',
+                '平均分': row[7] if len(row) > 7 else '',
+                '绩点': row[7] if len(row) > 7 else '',  # 使用平均分作为绩点的别名
+                '成绩': row[8] if len(row) > 8 else '',
+                '名次': row[9] if len(row) > 9 else '',
+                '未通过原因': row[10] if len(row) > 10 else '',
+                '英文课程名': row[11] if len(row) > 11 else ''
+            }
+            dict_scores.append(score_dict)
+
+    return dict_scores
+
+
+def get_scores_data(debug_mode: bool = False) -> tuple[bool, list, str]:
+    """获取本学期成绩数据
+
+    Args:
+        debug_mode: 是否开启调试模式
+
+    Returns:
+        (成功状态, 成绩数据列表, 学生姓名)
+    """
+    # 成绩查询URL
+    scores_url = get_config("SCORES_URL")
+
+    # 创建临时文件管理器
+    temp_manager = TempFileManager()
+    temp_manager.set_debug_mode(debug_mode)
+
+    try:
+        logger.info("\n正在访问成绩查询页面...")
+        scores_resp = make_request(scores_url, timeout=15)
+
+        if not scores_resp or scores_resp.status_code != 200:
+            logger.error(f"成绩查询失败，状态码: {scores_resp.status_code if scores_resp else 'None'}")
+            return False, [], ""
+
+        # 解析HTML
+        soup = BeautifulSoup(scores_resp.text, 'html.parser')
+
+        # 提取学生姓名
+        student_name = extract_student_name(scores_resp.text)
+        if student_name:
+            logger.info(f"获取到学生姓名: {student_name}")
+        else:
+            logger.warning("未能获取学生姓名")
+            student_name = "同学"  # 默认称呼
+
+        # 尝试从API获取成绩数据
+        score_rows = get_scores_from_api(soup, temp_manager, debug_mode)
+
+        # 如果API方法失败，尝试从HTML解析
+        if not score_rows:
+            logger.info("\n尝试从HTML解析成绩表格...")
+            score_rows = get_scores_from_html(soup)
+
+        # 转换为字典格式
+        score_dicts = convert_rows_to_dict(score_rows)
+
+        # 清理临时文件
+        temp_manager.clean_all()
+
+        return True, score_dicts, student_name
+
+    except Exception as e:
+        logger.error(f"获取成绩数据时出错: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        # 清理临时文件
+        temp_manager.clean_all()
+        return False, [], ""
