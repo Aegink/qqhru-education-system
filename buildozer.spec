@@ -84,16 +84,16 @@ fullscreen = 0
 android.permissions = INTERNET,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,ACCESS_NETWORK_STATE,ACCESS_WIFI_STATE
 
 # (int) Target Android API, should be as high as possible.
-android.api = 33
+android.api = 34
 
 # (int) Minimum API your APK will support.
 android.minapi = 21
 
 # (int) Android SDK version to use (deprecated, use android.api instead)
-#android.sdk = 33
+#android.sdk = 34
 
 # (str) Android NDK version to use
-android.ndk = 25b
+android.ndk = 26b
 
 # (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
 android.ndk_api = 21
@@ -229,10 +229,10 @@ android.archs = arm64-v8a
 #
 
 # (str) python-for-android fork to use, defaults to upstream (kivy)
-#p4a.fork = kivy
+p4a.fork = kivy
 
 # (str) python-for-android branch to use, defaults to master
-#p4a.branch = master
+p4a.branch = develop
 
 # (str) python-for-android git clone directory (if empty, it will be automatically cloned from github)
 #p4a.source_dir =

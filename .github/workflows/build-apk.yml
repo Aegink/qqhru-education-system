@@ -10,7 +10,7 @@ on:
       debug_build:
         description: 'Enable debug build with verbose output'
         required: false
-        default: 'false'
+        default: false
         type: boolean
 
 jobs:
@@ -32,9 +32,10 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config \
-          zlib1g-dev libncurses-dev libncursesw5-dev libtinfo6 cmake libffi-dev \
-          libssl-dev build-essential
+          git zip unzip openjdk-17-jdk python3-pip autoconf automake libtool \
+          libtool-bin autotools-dev pkg-config zlib1g-dev libncurses-dev \
+          libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev build-essential \
+          m4 gettext
 
     - name: Set up Java environment
       run: |
@@ -103,7 +104,7 @@ jobs:
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        pip install buildozer==1.5.0 cython==3.0.10 virtualenv
+        pip install buildozer==1.5.0 cython==3.0.11 virtualenv
         pip install -r requirements.txt
 
     - name: Install additional dependencies for buildozer
@@ -151,6 +152,12 @@ jobs:
         echo "Android SDK location:"
         echo $ANDROID_HOME
 
+        # 显示autotools版本
+        echo "Autotools versions:"
+        autoconf --version | head -1
+        automake --version | head -1
+        libtool --version | head -1
+
         # 设置buildozer使用我们安装的SDK
         echo "Configuring buildozer to use installed SDK..."
 
@@ -182,6 +189,14 @@ jobs:
         export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
         export ANDROID_HOME=$HOME/android-sdk
         export PATH=$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/34.0.0:$PATH
+
+        # 设置autotools环境变量以解决libffi编译问题
+        export ACLOCAL_PATH="/usr/share/aclocal:$ACLOCAL_PATH"
+        export AUTOCONF_VERSION="2.71"
+        export AUTOMAKE_VERSION="1.16"
+
+        # 清理可能的autotools缓存
+        rm -rf $HOME/.buildozer/android/platform/python-for-android/dist/*/build/other_builds/libffi/*/libffi/autom4te.cache 2>/dev/null || true
 
         # 显示环境信息
         echo "Environment variables:"
