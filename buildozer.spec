@@ -232,10 +232,14 @@ android.archs = arm64-v8a
 p4a.fork = kivy
 
 # (str) python-for-android branch to use, defaults to master
-p4a.branch = develop
+p4a.branch = master
 
 # (str) python-for-android git clone directory (if empty, it will be automatically cloned from github)
 #p4a.source_dir =
+
+# (str) Specific commit to use for python-for-android (optional)
+# Use a commit that has libffi fixes
+p4a.commit = 2a9a4b8
 
 # (str) The directory in which python-for-android should look for your own build recipes (if any)
 #p4a.local_recipes =

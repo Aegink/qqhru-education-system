@@ -113,9 +113,13 @@ jobs:
           libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
           libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev \
           libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
-          libjpeg-dev libpng-dev libfreetype6-dev libffi-dev \
+          libjpeg-dev libpng-dev libfreetype6-dev libffi-dev libffi8 \
           libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev \
           libncurses5-dev libncursesw5-dev xz-utils tk-dev
+
+        # 确保libffi pkg-config文件存在
+        sudo find /usr -name "libffi.pc" 2>/dev/null || echo "libffi.pc not found"
+        pkg-config --exists libffi && echo "libffi pkg-config OK" || echo "libffi pkg-config failed"
 
     - name: Create assets if not exist
       run: |
@@ -194,6 +198,18 @@ jobs:
         export ACLOCAL_PATH="/usr/share/aclocal:$ACLOCAL_PATH"
         export AUTOCONF_VERSION="2.71"
         export AUTOMAKE_VERSION="1.16"
+
+        # 强制跳过libffi的autotools重新生成
+        export NOCONFIGURE=1
+        export SKIP_AUTORECONF=1
+        export LIBFFI_CFLAGS="-I/usr/include/libffi"
+        export LIBFFI_LIBS="-lffi"
+        export PKG_CONFIG_PATH="/usr/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH"
+
+        # 强制使用系统libffi，避免重新编译
+        export P4A_LIBFFI_SYSTEM=1
+        export CPPFLAGS="-I/usr/include/libffi $CPPFLAGS"
+        export LDFLAGS="-L/usr/lib/x86_64-linux-gnu $LDFLAGS"
 
         # 清理可能的autotools缓存
         rm -rf $HOME/.buildozer/android/platform/python-for-android/dist/*/build/other_builds/libffi/*/libffi/autom4te.cache 2>/dev/null || true
